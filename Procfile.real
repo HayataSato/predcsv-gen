@@ -1,0 +1,3 @@
+web: python manage.py collectstatic --noinput ; gunicorn predcsv_gen.wsgi --log-file -
+celery_worker: celery -A predcsv_gen.celery worker -l info --concurrency 8 --pool=solo
+celery_beat: celery -A predcsv_gen beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile /tmp/celerybeat.pid

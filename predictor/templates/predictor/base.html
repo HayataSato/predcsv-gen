@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="{% static 'predictor/pwa/manifest.json' %}">
+    <link rel="icon" href="{% static 'predictor/icon/favicon.ico' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+    <link href="https://cdn.rawgit.com/maechabin/bootstrap-material-button-color/master/dist/cb-materialbtn.0.5.5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Predcsv Generator{% endblock title %}</title>
+    <script>
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }).catch(function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        }
+    </script>
+    {% block extra_head %}{% endblock extra_head %}
+</head>
+<body>
+    {% block extra_body %}{% endblock extra_body %}
+    <header class="bg-dark text-white py-2">
+        <div class="d-flex flex-row bd-highlight justify-content-between align-items-center">
+            <h1><a class="ml-5 pl-5 align-middle text-decoration-none text-light" href="{% url 'predictor:index' %}">Predcsv Generator</a></h1>
+            <div class="mr-5 pr-5 d-flex p-2 align-middle bd-highlight flex-column align-items-left ">
+                <a class="text-decoration-none text-light" href="https://github.com/HayataSato/predcsv-gen"><i class="fab fa-github fa-3x my-2"></i></a>
+            </div>
+        </div>
+    </header>
+    <div class="container mt-5">
+        {% block content %}{% endblock content %}
+    </div>
+    <footer>
+        {% block footer %}{% endblock footer %}
+    </footer>
+    <!-- JavaScript -->
+    <!-- jQuery, Popper.js, Bootstrap JS -->
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

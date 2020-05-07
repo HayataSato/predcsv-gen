@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteMappingsManager">
+    <list>
+      <list>
+        <remote-mappings server-id="python@wsl://UBUNTU/home/hayata/.pyenv/shims/python" />
+        <remote-mappings server-id="python@sftp://hayata@localhost:22/mnt/c/Users/payap/python_webapp/predcsv_gen/venv_u/bin/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/mnt/c/Users/payap/python_webapp/predcsv_gen" />
+            </list>
+          </settings>
+        </remote-mappings>
+        <remote-mappings server-id="python@sftp://hayata@localhost:22/mnt/c/Users/payap/python_webapp/predcsv_gen/venv/bin/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/mnt/c/Users/payap/python_webapp/predcsv_gen" />
+            </list>
+          </settings>
+        </remote-mappings>
+      </list>
+    </list>
+  </component>
+</project>

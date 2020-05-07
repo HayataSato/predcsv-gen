@@ -1,0 +1,151 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Predcsv Generator{% endblock title %}
+
+{% block extra_head %}
+    <link href="{% static 'predictor/css/base.css' %}" rel="stylesheet" >
+    {{form.media.css}}
+{% endblock extra_head %}
+
+{% block extra_body %} {{form.media.js}} {% endblock extra_body %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12 mt-5">
+    <h2 class="card-header text-center logo">Prediction from inputs</h2>
+        <div class="card-body  mt-3">
+
+            {# Djangoでファイル送るときはenctype="multipart/form-data"が必須 #}
+            {# 参考) https://nmomos.com/tips/2019/06/28/django-file-upload/ , https://intellectual-curiosity.tokyo/2018/12/18/django%e3%81%a7%e3%83%95%e3%82%a1%e3%82%a4%e3%83%ab%e3%82%92%e3%82%a2%e3%83%83%e3%83%97%e3%83%ad%e3%83%bc%e3%83%89%e3%81%99%e3%82%8b%e6%96%b9%e6%b3%95/ #}
+            <form action="/" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+                <div class='form-group'>
+                    <label for="id_file">MODEL：</label><br>
+                    {{ form.model | add_class:"form-control" }}
+                </div>
+                <div class='form-group mt-2'>
+                    <label for="id_file">CSV：</label>
+                    <div class='input-group'>
+                        {# bootstrapのcustom-file-input と， django-widget-tweaks(formアクションへのクラス付加) の併用 #}
+                        <div class="custom-file">
+                            {{ form.file | add_class:"custom-file-input" }}
+                            <label class="custom-file-label" for="id_file">Choose the csv file you want to predict.</label>
+                        </div>
+                        {# 取り消しボタンの追加 #}
+                        <div class="input-group-append">
+                            <input type="reset" class="btn btn-secondary reset " value="Delete">
+                        </div>
+                    </div>
+                </div>
+                <input class="btn btn-bluegrey500_rsd btn-block mt-5" type="submit" id="prediction" name="prediction" value="よそく！">
+            </form>
+        </div>
+        <div class="card-footer">
+
+            {# 処理のステータス #}
+            <h5 id="state">Status：{{ results.message }}</h5><br>
+        {# ------------------------------------------------------------------------------------ #}
+        {# taskを実行していない場合の表示. (モデルと入力ファイルの拡張子に関するバリデーションエラーのみを考慮)  #}
+        {# ------------------------------------------------------------------------------------ #}
+            {% if task_status.state is null %}
+                {% if results.message in "VALIDATION ERROR" %}
+                    <b>ERROR MESSAGE：</b><br>
+                    {% if error_message.file %}
+                        In input "CSV"
+                        {{ error_message.file | linebreaksbr }}
+                    {% endif %}
+                    {% if error_message.model %}
+                        In input "MODEL"
+                        {{ error_message.model | linebreaksbr }}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+        {# ---------------------------------------------------------- #}
+        {# task実行時の表示．2段目のif文で，非同期処理のステータスのに応じて分岐．#}
+        {# ---------------------------------------------------------- #}
+            {% if task_status.state %}
+
+                {# 非同期処理のステータスにかかわらず表示．(formの入力内容) #}
+                <b>MODEL：</b>
+                {% for m in results.model %}<li>{{ m }}</li>{% endfor %}<br>
+                <b>CSV (Name of input-file)：</b>
+                <li>{{ results.file }}</li>
+
+                {# 非同期処理のステータスのに応じた分岐 #}
+                {% if task_status.state == "PENDING" %}
+                    <form class="form-horizontal" action="/" method="post">
+                        {% csrf_token %}
+                        {% if task_id %}    {# 1ターン目の強制リロード画面遷移に合わせたIF文 #}
+                        <input class="" type="hidden" value="{{ task_id }}"  name="task_id">
+                        {% else %}
+                        <input class="" type="hidden" value="{{ task_status }}"  name="task_id">
+                        {% endif %}
+                        {% for m in results.model %}<input class="" type="hidden" value="{{ m }}"  name="model">{% endfor %}<br>
+                        <input class="" type="hidden" value="{{ results.file }}"  name="file">
+                        <input class="btn btn-blue500_rsd btn-block mt-4" id="reload" type="submit" name="reload" value="RELOAD">
+                        <p class="text-muted mt-2">15秒ごとに自動更新されます．</p>
+                    </form>
+                {% elif task_status.state == "SUCCESS" %}
+                    {# 非同期処理完了時のダウンロードボタン． #}
+                    <form action="/" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input class="" type="hidden" value="{{ results.task_result }}" name="path_file_output">
+                        <input class="btn btn-primary btn-block mt-4" type="submit" id="download" name="download" value="Download Pred CSV">
+                    </form>
+                {% elif task_status.state == "FAILURE"  %}
+                    <br><b>ERROR MESSAGE：</b><br>
+                    {{ results.task_result | linebreaksbr}}
+                    <input class="btn btn-danger btn-block mt-4" type="button" disabled="disabled" name="error" value="ERROR">
+                {% else %}
+                    <input class="btn btn-warning btn-block mt-4" type="button" disabled="disabled" name="other" value="OTHERS">
+                {% endif %}
+
+            {% endif %}
+        </div><br>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+{#  参照) https://cccabinet.jpn.org/bootstrap4/javascript/forms/file-browser  #}
+<script>
+    {# inputのファイル名を表示．1ファイルのみ対応 #}
+    $('.custom-file-input').on('change',function(){
+      $(this).next('.custom-file-label').html($(this)[0].files[0].name);
+    })
+    {# 取消ボタンの追加 #}
+    $('.reset').click(function(){
+        $(this).parent().prev().children('.custom-file-label').html('Choose the csv file you want to predict.');
+        $('.custom-file-input').val('');
+        setInterval(function(){
+            document.activeElement.blur();
+        },500);
+    })
+
+
+    function sleep(msec) {
+       return new Promise(function(resolve) {
+          setTimeout(function() {resolve()}, msec);
+       })
+    }
+    window.addEventListener('load', async function() {
+        // 処理中なら非同期で15秒ごとに更新
+        if (document.getElementById("reload") != null) {
+            await sleep(15000);
+            document.getElementById("reload").click();
+        }
+    });
+    window.addEventListener('load', function() {
+        // 作成中は、ぱわぽbutton＝disable
+        if (document.getElementById("state").textContent.match(/PROCESSING/)) {
+            document.getElementById("prediction").setAttribute('disabled', 'disabled');
+        }
+    });
+
+</script>
+
+{% endblock extra_js %}

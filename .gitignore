@@ -1,0 +1,16 @@
+*.pyc
+*~
+__pycache__
+db.sqlite3
+dump.rdb
+/static
+.env
+venv
+codes.txt
+run_console.txt
+!.gitkeep
+predcsv_gen/media/csv/*/*.csv
+requirements_ubuntu.txt
+requirements_win.txt
+.gitattributes
+train_x.csv.encrypted
