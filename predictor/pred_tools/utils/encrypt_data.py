@@ -17,7 +17,7 @@ import pandas as pd
 # -------------------------------------------------------------------------------------------
 # os.environ["DJANGO_SETTINGS_MODULE"] = "predcsv_gen.settings.local"
 # X_train = pd.DataFrame(pd.read_csv(os.path.join(settings.CSV_DIR, "train_test/train_x.csv")))
-# pd.DataFrame(X_train.nunique(), columns=["n"]).query("n==1 | n==0").to_csv(os.path.join(settings.CSV_DIR, "for_pred/uninformed_column.csv"), index=False)
+# pd.DataFrame(X_train.nunique(), columns=["n"]).query("n==1 | n==0").to_csv(os.path.join(settings.CSV_DIR, "for_pred/uninformed_column.csv"), index=True)
 
 
 # ----------------------
@@ -67,7 +67,7 @@ def open_encrypt_data(todo_csv_encrypted_name):
 
 # uninformed column
 # create_encrypt_data("uninformed_column.csv")
-# open_encrypt_data("uninformed_column.csv.encrypted")["Unnamed: 0"]
+# open_encrypt_data("uninformed_column.csv.encrypted")
 
 # X_XGB
 # create_encrypt_data("X_XGB.csv")
@@ -78,5 +78,6 @@ def open_encrypt_data(todo_csv_encrypted_name):
 # open_encrypt_data("train_x.csv.encrypted")
 
 # train_x_min
+# pd.read_csv(settings.CSV_DIR + "train_test/train_x.csv").head(50).to_csv(settings.CSV_DIR + "for_pred/train_x_min.csv", index=False)
 # create_encrypt_data("train_x_min.csv")
 # open_encrypt_data("train_x_min.csv.encrypted")
