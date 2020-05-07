@@ -54,7 +54,7 @@ def generator(path_saved_csv):
         # Create output csv
         path_file_output = os.path.join(settings.CSV_DIR, "output",
                                         "pred_" + os.path.splitext(name_file_input)[0] + ".csv")
-        Y_pred_df.to_csv(path_or_buf=path_file_output)
+        Y_pred_df.to_csv(path_or_buf=path_file_output, index=False)
         # Output (Relative-path of output csv)
         return path_file_output
 

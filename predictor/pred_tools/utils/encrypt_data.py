@@ -17,7 +17,7 @@ import pandas as pd
 # -------------------------------------------------------------------------------------------
 # os.environ["DJANGO_SETTINGS_MODULE"] = "predcsv_gen.settings.local"
 # X_train = pd.DataFrame(pd.read_csv(os.path.join(settings.CSV_DIR, "train_test/train_x.csv")))
-# pd.DataFrame(X_train.nunique(), columns=["n"]).query("n==1 | n==0").to_csv(os.path.join(settings.CSV_DIR, "for_pred/uninformed_column.csv"))
+# pd.DataFrame(X_train.nunique(), columns=["n"]).query("n==1 | n==0").to_csv(os.path.join(settings.CSV_DIR, "for_pred/uninformed_column.csv"), index=False)
 
 
 # ----------------------
